@@ -8,6 +8,12 @@ const App = () => {
 
   const handleNameSubmit = (event) => {
     event.preventDefault()
+
+    if (persons.some(person => person.name.toLowerCase() === newName.toLowerCase())) {
+      alert(`${newName} is already added to phonebook`)
+      setNewName('')
+      return
+    }
     const newNameObj = { name: newName }
     setPersons(persons.concat(newNameObj))
     setNewName('')
