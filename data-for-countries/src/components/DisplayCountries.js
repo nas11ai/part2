@@ -1,6 +1,7 @@
 import React from 'react'
 import Country from './Country.js'
 import TenCountry from './TenCountry'
+import DisplayWeather from './DisplayWeather.js'
 
 const DisplayCountries = ({ countryObj, newCountry, setNewCountry }) => {
     const countriesName = countryObj.map(country => country.name.common)
@@ -22,7 +23,10 @@ const DisplayCountries = ({ countryObj, newCountry, setNewCountry }) => {
             )
         } else if (filteredCountryName.length === 1) {
             return (
-                <Country country={filteredCountry} />
+                <div>
+                    <Country country={filteredCountry} />
+                    <DisplayWeather country={filteredCountry} />
+                </div>
             )
         } else {
             return <p>No country matched with your filter</p>
