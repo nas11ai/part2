@@ -1,9 +1,16 @@
 import React from 'react'
 import Country from './Country.js'
+import TenCountry from './TenCountry'
 
-const DisplayCountries = ({ countryObj, newCountry }) => {
+const DisplayCountries = ({ countryObj, newCountry, setNewCountry }) => {
     const countriesName = countryObj.map(country => country.name.common)
     const filteredCountryName = countriesName.filter(name => name.toLowerCase().includes(newCountry.toLowerCase()))
+    const filteredCountry = countryObj.find(country => country.name.common === filteredCountryName[0])
+
+    const showInfo = (countryName) => {
+        setNewCountry(countryName);
+    };
+
     if (newCountry === '') {
         return <p>please input the country name</p>
     } else {
@@ -11,18 +18,14 @@ const DisplayCountries = ({ countryObj, newCountry }) => {
             return <p>Too many matches, specify another filter</p>
         } else if (filteredCountryName.length > 1) {
             return (
-                <div>
-                    <p>Countries List:</p>
-                    <ul>
-                        {filteredCountryName.map(country => <li key={country}>{country}</li>)}
-                    </ul>
-                </div>
+                <TenCountry filteredCountryName={filteredCountryName} showInfo={showInfo} />
             )
         } else if (filteredCountryName.length === 1) {
-            const filteredCountry = countryObj.find(country => country.name.common === filteredCountryName[0])
             return (
                 <Country country={filteredCountry} />
             )
+        } else {
+            return <p>No country matched with your filter</p>
         }
     }
 }

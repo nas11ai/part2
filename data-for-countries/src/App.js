@@ -19,7 +19,7 @@ const App = () => {
     <div>
       <div>find countries <input value={newCountry} onChange={handleCountryChange} /></div>
       <div>
-        <DisplayCountries countryObj={countries} newCountry={newCountry} />
+        <DisplayCountries countryObj={countries} newCountry={newCountry} setNewCountry={setNewCountry} />
       </div>
     </div>
   )
