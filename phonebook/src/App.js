@@ -11,6 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
   const [message, setMessage] = useState('')
+  const [isErrorMessage, setIsErrorMessage] = useState(false)
 
   useEffect(() => {
     personService
@@ -36,9 +37,17 @@ const App = () => {
             setPersons(persons.map(
               person => person.id === existingPerson.id ? returnedPerson : person
             ))
+          }).catch(error => {
+            setIsErrorMessage(true)
+            setMessage(
+              `${changedPerson.name} is already removed from server`
+            )
+            setTimeout(() => setMessage(''), 5000)
+            setPersons(persons.filter(person => person.id !== changedPerson.id))
           })
         setNewName('')
         setNewNumber('')
+        setIsErrorMessage(false)
       }
     } else {
       const newNameObj = {
@@ -49,6 +58,7 @@ const App = () => {
         .create(newNameObj)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
+          setIsErrorMessage(false)
           setMessage(`Added ${newName}`)
           setTimeout(() => setMessage(''), 5000)
           setNewName('')
@@ -80,7 +90,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} />
+      <Notification message={message} isErrorMessage={isErrorMessage} />
       <Filter nameFilter={nameFilter} handleNameFilterChange={handleNameFilterChange} />
       <h2>add a new</h2>
       <PersonForm newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} handleSubmit={handleSubmit} />
