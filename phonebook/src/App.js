@@ -3,7 +3,6 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personService from './services/persons'
-import axios from 'axios'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -20,23 +19,39 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    if (persons.some(person => person.name.toLowerCase() === newName.toLowerCase())) {
+    const existingPerson = persons.find(person => person.name.toLowerCase() === newName.toLowerCase())
+
+    if (existingPerson && existingPerson.number === newNumber) {
       alert(`${newName} is already added to phonebook`)
       setNewName('')
+      setNewNumber('')
       return
-    }
-    const newNameObj = {
-      name: newName,
-      number: newNumber
-    }
-    personService
-      .create(newNameObj)
-      .then(returnedPerson => {
-        setPersons(persons.concat(returnedPerson))
+    } else if (existingPerson && existingPerson.number !== newNumber) {
+      if (window.confirm(`${existingPerson.name} is already added to phonebook, replace the old number with a new one ?`)) {
+        const changedPerson = { ...existingPerson, number: newNumber }
+        personService.update(existingPerson.id, changedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(
+              person => person.id === existingPerson.id ? returnedPerson : person
+            ))
+          })
         setNewName('')
         setNewNumber('')
-      })
-      .catch(error => alert(error.message))
+      }
+    } else {
+      const newNameObj = {
+        name: newName,
+        number: newNumber
+      }
+      personService
+        .create(newNameObj)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(error => alert(error.message))
+    }
   }
 
   const handleDelete = (id) => {
